@@ -1,0 +1,11 @@
+name: Check for bot approval
+on:
+  pull_request_review:
+    types: [submitted]
+jobs:
+  build:
+    name: Check for bot approval
+    runs-on: ubuntu-latest
+    if: github.event.review.state == 'approved' && github.event.sender == 'mergify[bot]'
+    steps:
+      - run: echo "Was just approved by mergify[bot]"

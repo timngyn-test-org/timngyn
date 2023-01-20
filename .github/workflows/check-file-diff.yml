@@ -14,9 +14,10 @@ jobs:
           # Minimal depth 2 so we can checkout the commit before possible merge commit.
           fetch-depth: 2
       - name: get changed files
-        id: getfile
+        env:
+          target_branch: main
         run: |
-          echo "FILES=$(git diff-tree --no-commit-id --name-status -r ${{ github.sha }}})" >> $GITHUB_ENV
+          echo "FILES=$(git diff-tree --no-commit-id --name-status -r ${{ env.target_branch }}..${{ github.sha }}})" >> $GITHUB_ENV
       - name: echo output
         run: |
           echo ${{ env.FILES }}

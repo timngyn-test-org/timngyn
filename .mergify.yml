@@ -1,8 +1,8 @@
 pull_request_rules:
   - name: Add ready-to-merge label when all reviewers have reviewed
     conditions:
-      - "#approved-reviews-by>=2"
       - "#review-requested=0"
+      - "#commented-reviews-by=0"
       - "#changes-requested-reviews-by=0"
     actions:
       label:
@@ -17,8 +17,8 @@ pull_request_rules:
   - name: merge when bot approves
     conditions:
       - approved-reviews-by=mergify[bot]
-      - "#approved-reviews-by>=3"
       - "#review-requested=0"
+      - "#commented-reviews-by=0"
       - "#changes-requested-reviews-by=0"
       - check-success="Ready for merge"
     actions:

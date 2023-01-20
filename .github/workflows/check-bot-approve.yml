@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.sender != 'mergify[bot]'
     steps:
+      - run: echo ${{ github.event.sender }} just approved
       - run: exit 1
   pass:
     name: Ready for merge

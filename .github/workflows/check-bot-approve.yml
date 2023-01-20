@@ -3,9 +3,15 @@ on:
   pull_request_review:
     types: [submitted]
 jobs:
-  build:
+  check:
     name: Check for bot approval
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved' && github.event.sender == 'mergify[bot]'
     steps:
       - run: echo "Was just approved by mergify[bot]"
+  block:
+    name: Ready for merge
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Success! ready to merge"

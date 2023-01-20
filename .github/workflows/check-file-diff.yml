@@ -16,7 +16,7 @@ jobs:
       - name: get changed files
         run: |
           git fetch origin main
-          echo "FILES=$(git diff --name-status -r origin/main ${{ github.pull_request.head.sha }})" >> $GITHUB_ENV
+          echo "FILES=$(git diff --name-status origin/main ${{ github.pull_request.head.sha }})" >> $GITHUB_ENV
       - name: echo output
         run: |
           echo ${{ env.FILES }}

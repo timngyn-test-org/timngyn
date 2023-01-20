@@ -8,13 +8,16 @@ pull_request_rules:
       label:
         add:
           - ready-to-merge
-  - name: Make bot approve once ready-to-merge (do this because we we will make a status check to see if the bot has approved or not)
+  - name: Make bot approve once ready-to-merge label is added
     conditions:
       - label="ready-to-merge"
+      - "#approved-reviews-by>=2"
+      - "#review-requested=0"
+      - "#changes-requested-reviews-by=0"
     actions:
       review:
         type: APPROVE
-  - name: merge when bot approves
+  - name: Merge after bot approves
     conditions:
       - approved-reviews-by=mergify[bot]
       - "#approved-reviews-by>=3"

@@ -13,7 +13,7 @@ jobs:
         with:
           # Minimal depth 2 so we can checkout the commit before possible merge commit.
           fetch-depth: 2
-      - name: get changed files
+      - name: Get count of deleted files
         run: |
           git fetch origin main
           echo "FILES=$(git diff --name-status --diff-filter=d origin/main ${{ github.pull_request.head.sha }} | wc -l)" >> $GITHUB_ENV

@@ -16,7 +16,7 @@ jobs:
       - name: get changed files
         id: getfile
         run: |
-          echo "{files}={git diff-tree --no-commit-id --name-status -r ${{ github.sha }}}" >> $GITHUB_OUTPUT
+          echo "FILES=$(git diff-tree --no-commit-id --name-status -r ${{ github.sha }}})" >> $GITHUB_ENV
       - name: echo output
         run: |
-          echo ${{ steps.getfile.outputs.files }}
+          echo ${{ env.FILES }}

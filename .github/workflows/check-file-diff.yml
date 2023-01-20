@@ -15,7 +15,6 @@ jobs:
           fetch-depth: 2
       - name: get changed files
         run: |
-          # Fetch origin main and get the diff between this branch and the current HEAD sha, then pipe it to wc to count how many files were deleted
           git fetch origin main
           echo "FILES=$(git diff --name-status origin/main ${{ github.pull_request.head.sha }} | wc -l)" >> $GITHUB_ENV
       - name: echo output

@@ -6,9 +6,9 @@ jobs:
   check:
     name: Check for bot approval
     runs-on: ubuntu-latest
-    if: github.event.review.state == 'approved' && github.event.sender == 'mergify[bot]'
+    if: github.event.sender != 'mergify[bot]'
     steps:
-      - run: echo "Was just approved by mergify[bot]"
+      - run: exit 1
   block:
     name: Ready for merge
     needs: check

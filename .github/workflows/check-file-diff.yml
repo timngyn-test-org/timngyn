@@ -17,7 +17,7 @@ jobs:
         env:
           target_branch: main
         run: |
-          echo "FILES=$(git diff-tree --no-commit-id --name-status -r ${{ env.target_branch }}..${{ github.sha }})" >> $GITHUB_ENV
+          echo "FILES=$(git diff-tree --no-commit-id --name-status -r ${{ env.target_branch }}..${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
       - name: echo output
         run: |
           echo ${{ env.FILES }}

@@ -5,6 +5,9 @@ on:
     types: [opened, synchronize]
 jobs:
   checkIfRedirectsAreNeeded:
+    permissions:
+      pull-requests: write # used to remove label
+      contents: read
     name: Check if redirects are needed
     runs-on: ubuntu-latest
     steps:

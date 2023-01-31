@@ -52,3 +52,10 @@ jobs:
     steps:
       - name: Fail status check if redirects are needed
         run: exit 1
+  passPR:
+    name: Pass status check if redirects are added
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'redirects-added')
+    steps:
+      - name: Pass status check if redirects are added
+        run: echo "PR has redirects-added label"

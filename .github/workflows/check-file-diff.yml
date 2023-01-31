@@ -16,7 +16,7 @@ jobs:
       - name: Get count of deleted files
         run: |
           git fetch origin main
-          echo "DELETED_FILES=$(git diff --name-status --diff-filter=d origin/main -- src/team2 ${{ github.pull_request.head.sha }} -- src/team2 | wc -l)" >> $GITHUB_ENV
+          echo "DELETED_FILES=$(git diff --name-status --diff-filter=D origin/main -- src/team2 ${{ github.pull_request.head.sha }} -- src/team2 | wc -l)" >> $GITHUB_ENV
           echo "Deleted file count: ${{ env.DELETED_FILES }}"
       - name: Add redirects-needed label if there are deleted files
         if: ${{ env.DELETED_FILES > 0 }}

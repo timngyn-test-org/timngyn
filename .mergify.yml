@@ -36,8 +36,8 @@ pull_request_rules:
             - test-label
   - name: Comment on PR about test-label
     conditions:
-      - label="test-label"
+      - label="redirects-needed"
     actions:
       comment:
         message: |
-            @{{author}}, thank you for requesting to the `test-label`!
+            @{{author}}, redirects are needed!

@@ -1,11 +1,11 @@
 name: Check file diff
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
+    types: [opened, synchronize]
 jobs:
-  validate:
-    name: Check for deleted files
+  checkIfRedirectsAreNeeded:
+    name: Check if redirects are needed
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -13,10 +13,16 @@ jobs:
         with:
           # Minimal depth 2 so we can checkout the commit before possible merge commit.
           fetch-depth: 2
-      - name: get changed files
+      - name: Get count of deleted files
         run: |
           git fetch origin main
-          echo "FILES=$(git diff --name-status --diff-filter=d origin/main ${{ github.pull_request.head.sha }} | wc -l)" >> $GITHUB_ENV
-      - name: echo output
-        run: |
-          echo ${{ env.FILES }}
+          echo "DELETED_FILES=$(git diff --name-status --diff-filter=d origin/main -- src/pages ${{ github.pull_request.head.sha }} -- src/pages | wc -l)" >> $GITHUB_ENV
+      - name: Add redirects-needed label if there are deleted files
+        if: ${{ env.DELETED_FILES > 0 }}
+        uses: actions/github-script@v6
+        with:
+          github-token:  ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+            const labels = ['redirects-needed'];
+            github.issues.addLabels({ owner, repo, issue_number, labels});

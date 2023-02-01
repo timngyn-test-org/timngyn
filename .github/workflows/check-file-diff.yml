@@ -9,7 +9,7 @@ jobs:
       pull-requests: write # used to remove label
     name: Check if redirects are needed
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'redirects-needed') }} && ${{ !contains(github.event.pull_request.labels.*.name, 'redirects-added') }}
+    if: (github.event.action == 'opened' || github.event.action == 'synchronized') && github.event.action != 'unlabeled'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

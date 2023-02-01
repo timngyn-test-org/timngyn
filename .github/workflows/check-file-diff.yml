@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.event.action == 'opened' || github.event.action == 'synchronize') &&
-      (${{ !contains(github.event.pull_request.labels.*.name, 'redirects-needed') }} || ${{ !contains(github.event.pull_request.labels.*.name, 'redirects-added') }})
+      (${{ !contains(github.event.pull_request.labels.*.name, 'redirects-needed') }} && ${{ !contains(github.event.pull_request.labels.*.name, 'redirects-added') }})
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

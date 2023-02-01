@@ -30,18 +30,10 @@ jobs:
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
             const labels = ['redirects-needed'];
             github.rest.issues.addLabels({ owner, repo, issue_number, labels});
-  removeRedirectsLabel:
-    permissions:
-      pull-requests: write
-    name: Remove redirects-needed label if redirects were added
+  blockPrIfRedirectsNeeded:
+    name: Block PR if redirects are needed
     runs-on: ubuntu-latest
-    if: github.event.action == 'labeled' && github.event.label.name == 'redirects-added'
+    if: contains(github.event.pull_request.labels.*.name, 'redirects-needed')
     steps:
-      - name: Remove redirects-needed label
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
-            const label = 'redirects-needed';
-            github.rest.issues.removeLabel({ owner, repo, issue_number, name: label});
+      - name: Exit with error
+        run: exit 1

@@ -48,3 +48,10 @@ pull_request_rules:
       label:
         add:
           - "redirects-needed"
+  - name: Remove redirects-needed label if redirects-label was added
+    conditions:
+      - label="redirects-added"
+    actions:
+      label:
+        remove:
+          - "redirects-needed"

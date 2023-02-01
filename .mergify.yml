@@ -41,6 +41,9 @@ pull_request_rules:
       comment:
         message: |
             @{{author}}, redirects are needed!
+      label:
+        remove:
+          - "redirects-added"
   - name: Add redirects-needed label if action fails
     conditions:
       - check-failure="Check if redirects are needed"

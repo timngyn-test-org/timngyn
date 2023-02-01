@@ -1,0 +1,27 @@
+name: Keep Codeowners Updated Workflow
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  checkIfCodeownersUpdateNeeded:
+    permissions:
+      pull-requests: write
+    name: Check if CODEOWNERS needs to be updated
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          # Minimal depth 2 so we can checkout the commit before possible merge commit.
+          fetch-depth: 2
+      - name: Get count of added files
+        run: |
+          git fetch origin main
+          echo "NEW_FILES=$(git diff --name-only --diff-filter=A origin/main ${{ github.pull_request.head.sha }})" >> $GITHUB_ENV
+      - name: Check file against CODEOWNERS
+        uses: actions/github-script@v6.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { NEW_FILES } = process.env
+            console.log(NEW_FILES);

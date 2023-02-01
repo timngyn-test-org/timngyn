@@ -40,7 +40,13 @@ pull_request_rules:
     actions:
       comment:
         message: |
-            @{{author}}, redirects are needed!
+            @{{author}}, since a file was deleted from the `src/pages` and/or `src/fragments` directories, redirects will need to be set up so these previous pages do not 404.
+          
+            What is the source address of the redirect? (Where are you trying to redirect from?)
+
+            What is the target address of the redirect? (Where are you trying to redirect to?)
+
+            Type of redirect? 301 - permanent redirect or 302 - temporary redirect? (More info on Amplify Hosting redirects here: https://docs.aws.amazon.com/amplify/latest/userguide/redirects.html) 
       label:
         remove:
           - "redirects-added"

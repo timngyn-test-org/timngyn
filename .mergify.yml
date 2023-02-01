@@ -36,8 +36,22 @@ pull_request_rules:
             - test-label
   - name: Comment on PR about test-label
     conditions:
-      - label="test-label"
+      - label="redirects-needed"
     actions:
       comment:
         message: |
-            @{{author}}, thank you for requesting to the `test-label`!
+            @{{author}}, redirects are needed!
+  - name: Add redirects-needed label if action fails
+    conditions:
+      - check-failure="Check if redirects are needed"
+    actions:
+      label:
+        add:
+          - "redirects-needed"
+  - name: Remove redirects-needed label if redirects-label was added
+    conditions:
+      - label="redirects-added"
+    actions:
+      label:
+        remove:
+          - "redirects-needed"

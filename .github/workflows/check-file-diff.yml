@@ -2,14 +2,14 @@ name: Check file diff
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize]
+    types: [opened, synchronize, labeled]
 jobs:
   checkIfRedirectsAreNeeded:
     permissions:
       pull-requests: write # used to remove label
-      contents: read
     name: Check if redirects are needed
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'redirects-needed') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -19,7 +19,7 @@ jobs:
       - name: Get count of deleted files
         run: |
           git fetch origin main
-          echo "DELETED_FILES=$(git diff --name-status --diff-filter=D origin/main -- src ${{ github.pull_request.head.sha }} -- src | wc -l)" >> $GITHUB_ENV
+          echo "DELETED_FILES=$(git diff --name-status --diff-filter=D origin/main -- src/team2 src/team3 ${{ github.pull_request.head.sha }} -- src/team2 src/team3 | wc -l)" >> $GITHUB_ENV
           echo "Deleted file count: ${{ env.DELETED_FILES }}"
       - name: Add redirects-needed label if there are deleted files
         if: ${{ env.DELETED_FILES > 0 }}
@@ -30,3 +30,10 @@ jobs:
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
             const labels = ['redirects-needed'];
             github.rest.issues.addLabels({ owner, repo, issue_number, labels});
+  blockPrIfRedirectsNeeded:
+    name: Block PR if redirects are needed
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'redirects-needed')
+    steps:
+      - name: Exit with error
+        run: exit 1

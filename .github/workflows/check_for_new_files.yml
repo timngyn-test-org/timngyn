@@ -29,3 +29,5 @@ jobs:
             const body = await response.text();
             console.log(body);
             console.log(body.split('\n'));
+            const parsedLines = body.split('\n').filter(e => !e.startsWith("#")).filter(e => e.length > 1);
+            console.log(parsedLines);

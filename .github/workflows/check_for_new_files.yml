@@ -57,6 +57,7 @@ jobs:
 
               github.rest.issues.createComment({owner, repo, issue_number, body: needCodeownersUpdateComment})
 
-              github.rest.issues.addLabels({ owner, repo, issue_number, ['update-codeowners']});
+              const labels = ['update-codeowners'];
+              github.rest.issues.addLabels({ owner, repo, issue_number, labels});
             }
             

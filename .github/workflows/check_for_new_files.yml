@@ -27,6 +27,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const ignore = require('ignore');
+
             const { NEW_FILES } = process.env
             console.log(NEW_FILES);
             const response = await fetch('https://raw.githubusercontent.com/timngyn-test-org/timngyn/timngyn-patch-2/.github/CODEOWNERS');
@@ -34,4 +36,11 @@ jobs:
             console.log(body);
             const codeownersFilePatterns = body.split('\n').filter(e => !e.startsWith("#")).filter(e => e.length > 1).map(e => e.split(/\s+/)[0]);
             console.log(codeownersFilePatterns);
+
+            const ig = ignore().add(codeownersFilePatterns);
             
+            NEW_FILES.split(' ').forEach(newFile => {
+              if (!ig.ignores(newFile)) {
+                console.log(`${newFile} is not covered by CODEOWNERS`);
+              }
+            });

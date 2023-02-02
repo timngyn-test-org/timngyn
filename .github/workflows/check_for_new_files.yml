@@ -25,6 +25,6 @@ jobs:
           script: |
             const { NEW_FILES } = process.env
             console.log(NEW_FILES);
-            const response = await fetch('https://raw.githubusercontent.com/aws-amplify/docs/main/.github/CODEOWNERS');
+            const response = await fetch('https://raw.githubusercontent.com/timngyn-test-org/timngyn/timngyn-patch-2/.github/CODEOWNERS');
             const body = await response.text();
             console.log(body);

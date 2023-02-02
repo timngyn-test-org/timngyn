@@ -25,3 +25,4 @@ jobs:
           script: |
             const { NEW_FILES } = process.env
             console.log(NEW_FILES);
+            console.log(fetch)

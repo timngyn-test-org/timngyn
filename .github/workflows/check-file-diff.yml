@@ -30,10 +30,5 @@ jobs:
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
             const labels = ['redirects-needed'];
             github.rest.issues.addLabels({ owner, repo, issue_number, labels});
-  blockPrIfRedirectsNeeded:
-    name: Block PR if redirects are needed
-    runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'redirects-needed')
-    steps:
       - name: Exit with error
         run: exit 1

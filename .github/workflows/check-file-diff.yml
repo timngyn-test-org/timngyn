@@ -30,6 +30,5 @@ jobs:
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
             const labels = github.rest.issues.listLabelsOnIssue({ owner, repo, issue_number });
             console.log(labels);
-            # github.rest.issues.addLabels({ owner, repo, issue_number, labels });
       - name: Exit with error
         run: exit 1

@@ -52,7 +52,9 @@ pull_request_rules:
           - "redirects-added"
   - name: Add redirects-needed label if action fails
     conditions:
-      - check-failure="Check if redirects are needed"
+      - or:
+        - check-failure="Check if redirects are needed on PR opened"
+        - check-failure="Check if redirects are needed on PR synchronize"
     actions:
       label:
         add:

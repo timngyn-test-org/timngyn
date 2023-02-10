@@ -42,7 +42,8 @@ jobs:
           fetch-depth: 2
       - name: Get count of deleted files from synchonize
         run: |
-          echo "DELETED_FILES_ON_SYNC=$(git diff --name-status --diff-filter=D ${{ github.sha }} --src ${{ github.event.before }} -- src | wc -l)" >> $GITHUB_ENV
+          git fetch origin ${{ github.event.before }} --depth=1
+          echo "DELETED_FILES_ON_SYNC=$(git diff --name-status --diff-filter=D ${{ github.event.before }} --src ${{ github.sha }} -- src | wc -l)" >> $GITHUB_ENV
           echo "Deleted file count: ${{ env.DELETED_FILES_ON_SYNC}}
       - name: Fail status check if there are deleted files
         if: ${{ env.DELETED_FILES_ON_SYNC > 0 }}

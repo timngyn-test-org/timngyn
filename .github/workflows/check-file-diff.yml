@@ -2,7 +2,7 @@ name: Check file diff
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize]
+    types: [opened, synchronize, labeled]
 jobs:
   printGithubContext:
     name: Print context
@@ -30,7 +30,7 @@ jobs:
       - name: Fail status check if there are deleted files
         if: ${{ env.DELETED_FILES_ON_OPENED > 0 }}
         run: exit 1
-  checkOnPRSynchronize:
+  checkOnPRSync:
     name: Check if redirects are needed on PR synchronize
     runs-on: ubuntu-latest
     if: github.event.action == 'synchronize'
@@ -43,11 +43,15 @@ jobs:
       - name: Get count of deleted files from synchonize
         run: |
           git fetch origin ${{ github.event.before }} --depth=1
-          echo "The github.event.before is ${{ github.event.before }}\n"
-          echo "trying to git diff now\n"
           echo "DELETED_FILES_ON_SYNC=$(git diff --name-status --diff-filter=D ${{ github.event.before }} -- src ${{ github.event.after }} -- src | wc -l)" >> $GITHUB_ENV
-          echo "done git diff\n"
-          echo "Deleted file count: ${{ env.DELETED_FILES_ON_SYNC}}"
+          echo "Deleted file count: ${{ env.DELETED_FILES_ON_SYNC }}"
       - name: Fail status check if there are deleted files
         if: ${{ env.DELETED_FILES_ON_SYNC > 0 }}
+        run: exit 1
+  failStatusCheck:
+    name: Fail status check if redirects have not been added
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'redirects-needed')
+    steps:
+      - name: Exit with error
         run: exit 1

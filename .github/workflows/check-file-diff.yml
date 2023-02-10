@@ -2,7 +2,7 @@ name: Check file diff
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize, labeled, unlabeled]
+    types: [opened, synchronize]
 jobs:
   checkIfRedirectsAreNeeded:
     permissions:

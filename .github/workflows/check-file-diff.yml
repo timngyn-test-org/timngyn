@@ -45,7 +45,7 @@ jobs:
           git fetch origin ${{ github.event.before }} --depth=1
           echo "The github.event.before is ${{ github.event.before }}\n"
           echo "trying to git diff now\n"
-          echo "DELETED_FILES_ON_SYNC=$(git diff --name-status ${{ github.event.before }} --src ${{ github.sha }} -- src | wc -l)" >> $GITHUB_ENV
+          echo "DELETED_FILES_ON_SYNC=$(git diff --name-status ${{ github.event.before }} -- src ${{ github.event.after }} -- src | wc -l)" >> $GITHUB_ENV
           echo "done git diff\n"
           echo "Deleted file count: ${{ env.DELETED_FILES_ON_SYNC}}"
       - name: Fail status check if there are deleted files

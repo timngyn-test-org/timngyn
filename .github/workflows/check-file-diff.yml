@@ -2,14 +2,20 @@ name: Check file diff
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize, labeled, unlabeled]
+    types: [opened, synchronize, labeled]
 jobs:
-  checkIfRedirectsAreNeeded:
-    permissions:
-      pull-requests: write # used to remove label
-    name: Check if redirects are needed
+  printGithubContext:
+    name: Print context
     runs-on: ubuntu-latest
-    if: github.event.action == 'opened' || github.event.action == 'synchronize'
+    steps:
+      - name: Print github context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+  checkOnPrOpen:
+    name: Check if redirects are needed on PR opened
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -19,19 +25,31 @@ jobs:
       - name: Get count of deleted files
         run: |
           git fetch origin main
-          echo "DELETED_FILES=$(git diff --name-status --diff-filter=D origin/main -- src/team2 src/team3 ${{ github.pull_request.head.sha }} -- src/team2 src/team3 | wc -l)" >> $GITHUB_ENV
-          echo "Deleted file count: ${{ env.DELETED_FILES }}"
-      - name: Add redirects-needed label if there are deleted files
-        if: ${{ env.DELETED_FILES > 0 }}
-        uses: actions/github-script@v6
+          echo "DELETED_FILES_ON_OPENED=$(git diff --name-status --diff-filter=D origin/main -- src ${{ github.pull_request.head.sha }} -- src | wc -l)" >> $GITHUB_ENV
+          echo "Deleted file count: ${{ env.DELETED_FILES_ON_OPENED }}"
+      - name: Fail status check if there are deleted files
+        if: ${{ env.DELETED_FILES_ON_OPENED > 0 }}
+        run: exit 1
+  checkOnPRSync:
+    name: Check if redirects are needed on PR synchronize
+    runs-on: ubuntu-latest
+    if: github.event.action == 'synchronize'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          github-token:  ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
-            const labels = ['redirects-needed'];
-            github.rest.issues.addLabels({ owner, repo, issue_number, labels});
-  blockPrIfRedirectsNeeded:
-    name: Block PR if redirects are needed
+          # Minimal depth 2 so we can checkout the commit before possible merge commit.
+          fetch-depth: 2
+      - name: Get count of deleted files from synchonize
+        run: |
+          git fetch origin ${{ github.event.before }} --depth=1
+          echo "DELETED_FILES_ON_SYNC=$(git diff --name-status --diff-filter=D ${{ github.event.before }} -- src ${{ github.event.after }} -- src | wc -l)" >> $GITHUB_ENV
+          echo "Deleted file count: ${{ env.DELETED_FILES_ON_SYNC }}"
+      - name: Fail status check if there are deleted files
+        if: ${{ env.DELETED_FILES_ON_SYNC > 0 }}
+        run: exit 1
+  failStatusCheck:
+    name: Fail status check if redirects have not been added
     runs-on: ubuntu-latest
     if: contains(github.event.pull_request.labels.*.name, 'redirects-needed')
     steps:
